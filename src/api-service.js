@@ -1,4 +1,4 @@
-const API_KEY = '32332367-32332367-6643b5098e6f829f8817b33dd';
+const API_KEY = '32332367-6643b5098e6f829f8817b33dd';
 const BASE_URL = 'https://pixabay.com/api';
 
 export default class PicturesApiService {
@@ -13,7 +13,6 @@ export default class PicturesApiService {
      return fetch(url)
     .then(responce => responce.json())
          .then(data => {
-        console.log(data)
         this.page +=1;
       return data;
    }) 
