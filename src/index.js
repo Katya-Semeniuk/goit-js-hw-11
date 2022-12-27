@@ -16,7 +16,6 @@ let gallery = new SimpleLightbox('.photo-card a', {
   captionDelay: 250,
 });
 
-
 makeBtnLoadMoreHidden();
 
 
@@ -26,23 +25,25 @@ function onSearch(e) {
   picturesApiService.query = e.currentTarget.elements.searchQuery.value.trim();
   
   if (picturesApiService.query === '') {
-    failedRequest()
+    failedRequestNotify()
     return;
   };
 
   picturesApiService.resetPage();
   picturesApiService.fetchArticles()
     .then(data => {
-      if (data.hits.length === 0) {
+      let { hits, totalHits, total } = data;
+      let pictures = hits;
+      console.log(pictures.length)
+      
+       if (pictures.length === 0) {
         unsuccessfulNotify()
           return;
   };
-    let { hits, totalHits } = data;
-    let succsessTotalNumber = totalHits;
-      let pictures = hits;
-
+       
+      
      cleanGalleryContainer(); 
-    successNotify(succsessTotalNumber);
+    successNotify(totalHits);
     createPicturesMarkup(pictures);
     makeBtnLoadMoreVisible();
     })
@@ -50,9 +51,14 @@ function onSearch(e) {
 
 function onLoadMore() {
   picturesApiService.fetchArticles().then(data => {
-    let { hits} = data;
-  let pictures = hits;
-  createPicturesMarkup(pictures)
+    let { hits, totalHits } = data;
+    let pictures = hits;
+  
+    createPicturesMarkup(pictures);
+    if (pictures.length === 0 && totalHits > 0 ) {
+         reachedEndSearch();
+         return;
+      }
   }); 
   };
 
@@ -100,31 +106,30 @@ function makeBtnLoadMoreHidden() {
   refs.btnLoadMore.hidden = true;
 };
 
-function successNotify(succsessTotalNumber) {
-  Notify.success(`Hooray! We found ${succsessTotalNumber} images`);
+function successNotify(totalHits) {
+  Notify.success(`Hooray! We found ${totalHits} images`);
 };
 
 function unsuccessfulNotify() {
    Notify.failure('Sorry, there are no images matching your search query. Please try again.');
 };
 
-function failedRequest() {
+function failedRequestNotify() {
   Notify.failure('Try to write the correct name');
 };
-// let restOfPhotos = response.data.totalHits - pixabayAPIService.page * pixabayAPIService.perPage;
-//       if (restOfPhotos <= 0) {
-//         reachedEndSearch();
-//         return;
-// } 
+ 
       
-// function reachedEndSearch() {
-//   Notify.warning("We're sorry, but you've reached the end of search results.")
-//   makeBtnLoadMoreHidden()
-// }
+function reachedEndSearch() {
+  Notify.warning("We're sorry, but you've reached the end of search results.")
+  makeBtnLoadMoreHidden();
+}
 
 
 
-// const lightbox = new SimpleLightbox('.gallery a', {
-//     captionsData: "alt",
-//     captionDelay: 250,
+// const { height: cardHeight } = document.querySelector(".gallery")
+//   .firstElementChild.getBoundingClientRect();
+
+// window.scrollBy({
+//   top: cardHeight * 2,
+//   behavior: "smooth",
 // });
