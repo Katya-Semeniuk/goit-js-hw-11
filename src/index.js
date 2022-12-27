@@ -19,9 +19,9 @@ let gallery = new SimpleLightbox('.photo-card a', {
 makeBtnLoadMoreHidden();
 
 
-function onSearch(e) {
-    e.preventDefault();
-    
+async function onSearch(e) {  
+  try {
+      e.preventDefault();
   picturesApiService.query = e.currentTarget.elements.searchQuery.value.trim();
   
   if (picturesApiService.query === '') {
@@ -30,27 +30,30 @@ function onSearch(e) {
   };
 
   picturesApiService.resetPage();
-  picturesApiService.fetchArticles()
+    await picturesApiService.getPictures()
     .then(data => {
-      let { hits, totalHits, total } = data;
+      let { hits, totalHits } = data;
       let pictures = hits;
-      console.log(pictures.length)
       
        if (pictures.length === 0) {
         unsuccessfulNotify()
           return;
-  };
-       
-      
+  }; 
      cleanGalleryContainer(); 
-    successNotify(totalHits);
-    createPicturesMarkup(pictures);
+     createPicturesMarkup(pictures);
+       successNotify(totalHits);
     makeBtnLoadMoreVisible();
     })
+   } catch (error) {
+    console.log(error)
+  }
+  
 };
 
-function onLoadMore() {
-  picturesApiService.fetchArticles().then(data => {
+
+async function onLoadMore() {
+  try {
+   await  picturesApiService.getPictures().then(data => {
     let { hits, totalHits } = data;
     let pictures = hits;
   
@@ -59,7 +62,8 @@ function onLoadMore() {
          reachedEndSearch();
          return;
       }
-  }); 
+  });
+} catch(error){console.log(error)}
   };
 
 function createPicturesMarkup(pictures) {

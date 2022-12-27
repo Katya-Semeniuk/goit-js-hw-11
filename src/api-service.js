@@ -7,17 +7,12 @@ export default class PicturesApiService {
         this.page = 1;
     }
 
-    fetchArticles() {
-    const url = `${BASE_URL}/?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`;
+    async getPictures() {
+        const url = `${BASE_URL}/?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.page}&per_page=40`;
+  const responce = await fetch(url);
+this.page +=1;
+return await responce.json()};
 
-     return fetch(url)
-    .then(responce => responce.json())
-         .then(data => {
-        this.page +=1;
-      return data;
-   }) 
-
-    }
     resetPage(){
    this.page = 1;
     }
