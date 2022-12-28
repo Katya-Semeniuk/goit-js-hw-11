@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
@@ -16,7 +16,7 @@ let gallery = new SimpleLightbox('.photo-card a', {
   captionDelay: 250,
 });
 
-makeBtnLoadMoreHidden();
+// makeBtnLoadMoreHidden();
 
 
 async function onSearch(e) {  
@@ -30,8 +30,7 @@ async function onSearch(e) {
   };
 
   picturesApiService.resetPage();
-    await picturesApiService.getPictures()
-    .then(data => {
+    const data = await picturesApiService.getPictures();
       let { hits, totalHits } = data;
       let pictures = hits;
       
@@ -43,52 +42,52 @@ async function onSearch(e) {
      createPicturesMarkup(pictures);
        successNotify(totalHits);
     makeBtnLoadMoreVisible();
-    })
+    
    } catch (error) {
     console.log(error)
   }
   
 };
 
-
 async function onLoadMore() {
   try {
-   await  picturesApiService.getPictures().then(data => {
+    const data = await picturesApiService.getPictures();
     let { hits, totalHits } = data;
     let pictures = hits;
   
     createPicturesMarkup(pictures);
-    if (pictures.length === 0 && totalHits > 0 ) {
-         reachedEndSearch();
-         return;
-      }
-  });
-} catch(error){console.log(error)}
-  };
+    if (pictures.length === 0 && totalHits > 0) {
+      reachedEndSearch();
+      return;
+    }
+  } catch (error) { console.log(error) }
+};
+
 
 function createPicturesMarkup(pictures) {
     const markupPictures = pictures
         .map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) =>
-        `<div class="photo-card">
+        `
+        <div class="photo-card">
         <a href="${largeImageURL}">
   <img class="photo" src="${webformatURL}" alt="${tags}" loading="lazy" />
   </a>
   <div class="info">
     <p class="info-item">
-                  <b>Likes</b>
-                <span class="subtitle">'${likes}'</span>  
+                  <b>Likes </b>
+                <span class="subtitle"> '${likes}'</span>  
     </p>
     <p class="info-item">
-                  <b>Views</b>
-                  <span class="subtitle">'${views}</span> '
+                  <b>Views </b>
+                  <span class="subtitle"> '${views}</span> '
     </p>
     <p class="info-item">
-                  <b>Comments</b>
-                  <span class="subtitle">'${comments}'</span>
+                  <b>Comments </b>
+                  <span class="subtitle"> '${comments}'</span>
     </p>
     <p class="info-item">
-                  <b>Downloads</b>
-                <span class="subtitle">'${downloads}' </span> 
+                  <b>Downloads </b>
+                <span class="subtitle"> '${downloads}' </span> 
     </p>
   </div>
 </div>`)
@@ -126,14 +125,4 @@ function failedRequestNotify() {
 function reachedEndSearch() {
   Notify.warning("We're sorry, but you've reached the end of search results.")
   makeBtnLoadMoreHidden();
-}
-
-
-
-// const { height: cardHeight } = document.querySelector(".gallery")
-//   .firstElementChild.getBoundingClientRect();
-
-// window.scrollBy({
-//   top: cardHeight * 2,
-//   behavior: "smooth",
-// });
+};

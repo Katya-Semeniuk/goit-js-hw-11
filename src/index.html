@@ -15,11 +15,19 @@
         autocomplete="off"
         placeholder="Search images..."
       />
-      <button type="submit" class="search-btn">Search</button>
+      <button type="submit" class="search-btn">
+        <ion-icon name="search"></ion-icon>
+      </button>
     </form>
-    <div class="gallery"></div>
-    <button type="button" class="load-more">Load more</button>
-    <!-- ❗️❗️❗️ Add partials like so for every page -->
-    <include src="./partials/example.html"></include>
+    <div class="gallery-container">
+      <div class="gallery"></div>
+    </div>
+    <button type="button" class="load-more">
+      Load more
+      <ion-icon class="icon" name="chevron-forward-outline"></ion-icon>
+    </button>
+
+    <!-- <include src="./partials/example.html"></include> -->
+    <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
   </body>
 </html>
